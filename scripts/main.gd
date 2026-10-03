@@ -17,11 +17,15 @@ func _on_multiplayer_spawner_spawned(node: Node) -> void:
 func _on_host_created() -> void:
 	# spawn host
 	_spawn_player(multiplayer.get_unique_id())
+	for peer_id in multiplayer.get_peers():
+		_spawn_player(peer_id)
 	multiplayer.peer_connected.connect(_spawn_player)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	print("Spawned local host player; waiting for peers")
 
 func _spawn_player(peer_id: int) -> void:
+	if has_node(str(peer_id)):
+		return
 	print("Spawning player for peer %d" % peer_id)
 	var player := PLAYER.instantiate() as CharacterBody3D
 	player.name = str(peer_id)
