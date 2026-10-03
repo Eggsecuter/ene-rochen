@@ -4,7 +4,7 @@ extends CharacterBody3D
 @export var jump_velocity := 4.5
 
 func _enter_tree() -> void:
-	set_multiplayer_authority(name.to_int())
+	set_multiplayer_authority(name.to_int(), true)
 
 func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority():

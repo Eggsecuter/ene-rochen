@@ -14,10 +14,18 @@ extends Camera3D
 signal on_turn(y_delta: float)
 
 func _ready() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	var is_local_player: bool = get_parent().is_multiplayer_authority()
+	current = is_local_player
+	set_process_input(is_local_player)
+	set_process_unhandled_input(is_local_player)
+	set_physics_process(is_local_player)
+	if is_local_player:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 # mouse look
 func _input(event: InputEvent) -> void:
+	if not get_parent().is_multiplayer_authority():
+		return
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		_apply_look(-event.relative * mouse_sensitivity)
 
@@ -26,6 +34,8 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not get_parent().is_multiplayer_authority():
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
