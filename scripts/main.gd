@@ -33,6 +33,7 @@ func _spawn_player(peer_id: int) -> void:
 	player.name = str(peer_id)
 	player.position = spawn_point.position + Vector3(players.size() * 2.5, 0, 0)
 	add_child(player)
+	player.reset_physics_interpolation()
 	_initialize_player(player)
 
 func _on_peer_disconnected(peer_id: int) -> void:
@@ -40,4 +41,5 @@ func _on_peer_disconnected(peer_id: int) -> void:
 
 func _initialize_player(player: CharacterBody3D) -> void:
 	if not players.has(player):
+		player.reset_physics_interpolation()
 		players.append(player)
