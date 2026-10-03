@@ -15,13 +15,6 @@ size = Vector3(30, 1, 30)
 [node name="Main" type="Node3D" unique_id=1889051257]
 script = ExtResource("1_o5qli")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=787584873]
-
-[node name="Host" type="Button" parent="CanvasLayer" unique_id=1510390411]
-offset_right = 8.0
-offset_bottom = 8.0
-text = "Host"
-
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=620891989]
 _spawnable_scenes = PackedStringArray("uid://dqalabolous7s")
 spawn_path = NodePath("..")
@@ -41,5 +34,4 @@ mesh = SubResource("BoxMesh_63jni")
 [node name="SpawnPoint" type="Node3D" parent="." unique_id=128084572]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[connection signal="pressed" from="CanvasLayer/Host" to="." method="_on_host_pressed"]
 [connection signal="spawned" from="MultiplayerSpawner" to="." method="_on_multiplayer_spawner_spawned"]

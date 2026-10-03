@@ -1,7 +1,6 @@
 extends Node
 
-signal host_created()
-
+const MAIN_SCENE := "res://scenes/main.tscn"
 const LOBBY_TYPE := Steam.LobbyType.LOBBY_TYPE_FRIENDS_ONLY
 const MAX_MEMBERS := 4
 
@@ -35,7 +34,7 @@ func _on_lobby_created(connection: int, lobby_id: int) -> void:
 		
 		multiplayer.multiplayer_peer = peer
 		print("Steam multiplayer host listening; peer id=%d" % multiplayer.get_unique_id())
-		host_created.emit()
+		get_tree().change_scene_to_file(MAIN_SCENE)
 	else:
 		push_error("Steam lobby creation failed: %d" % connection)
 
@@ -55,6 +54,7 @@ func _on_lobby_joined(lobby_id: int, _permissions: int, _locked: bool, response:
 		
 		multiplayer.multiplayer_peer = peer
 		print("Steam multiplayer client connecting to host Steam ID %d" % host_id)
+		get_tree().change_scene_to_file(MAIN_SCENE)
 	else:
 		push_error("Failed to join Steam lobby %d: response=%d" % [lobby_id, response])
 
@@ -69,3 +69,6 @@ func _on_server_disconnected() -> void:
 
 func _on_join_requested(lobby_id: int, _steam_id: int) -> void:
 	Steam.joinLobby(lobby_id)
+
+func open_join_overlay() -> void:
+	Steam.activateGameOverlay("friends")

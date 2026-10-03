@@ -3,16 +3,12 @@ extends Node3D
 const PLAYER = preload("uid://dqalabolous7s")
 
 @onready var spawn_point: Node3D = $SpawnPoint
-@onready var host_button: Button = $CanvasLayer/Host
 
 var players: Array[CharacterBody3D]
 
 func _ready() -> void:
-	Networking.host_created.connect(_on_host_created)
-
-func _on_host_pressed() -> void:
-	host_button.hide()
-	Networking.host_lobby()
+	if multiplayer.is_server():
+		_on_host_created()
 
 func _on_multiplayer_spawner_spawned(node: Node) -> void:
 	if node is CharacterBody3D:
