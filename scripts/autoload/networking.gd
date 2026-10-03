@@ -1,6 +1,7 @@
 extends Node
 
 signal lobby_members_changed
+signal main_scene_ready(peer_ids: Array[int])
 
 const MAIN_SCENE := "res://scenes/main.tscn"
 const LOBBY_SCENE := "res://scenes/lobby.tscn"
@@ -9,6 +10,7 @@ const MAX_MEMBERS := 4
 
 var peer: SteamMultiplayerPeer
 var current_lobby_id: int = 0
+var main_scene_ready_peers: Dictionary = {}
 
 
 func _ready() -> void:
@@ -107,7 +109,32 @@ func request_start_game() -> void:
 
 @rpc("authority", "call_local", "reliable")
 func start_game() -> void:
+	main_scene_ready_peers.clear()
 	get_tree().change_scene_to_file(MAIN_SCENE)
+
+func report_main_scene_ready() -> void:
+	if multiplayer.is_server():
+		main_scene_ready_peers[multiplayer.get_unique_id()] = true
+		_check_main_scene_ready()
+	else:
+		_report_main_scene_ready.rpc_id(1)
+
+@rpc("any_peer", "reliable")
+func _report_main_scene_ready() -> void:
+	if not multiplayer.is_server():
+		return
+	main_scene_ready_peers[multiplayer.get_remote_sender_id()] = true
+	_check_main_scene_ready()
+
+func _check_main_scene_ready() -> void:
+	if not multiplayer.is_server():
+		return
+	var peer_ids: Array[int] = [multiplayer.get_unique_id()]
+	for peer_id in multiplayer.get_peers():
+		if not main_scene_ready_peers.has(peer_id):
+			return
+		peer_ids.append(peer_id)
+	main_scene_ready.emit(peer_ids)
 
 func open_join_overlay() -> void:
 	Steam.activateGameOverlay("friends")
