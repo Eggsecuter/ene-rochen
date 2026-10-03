@@ -1,3 +1,45 @@
 [gd_scene format=3 uid="uid://tqygnw57myyt"]
 
+[ext_resource type="Script" uid="uid://bcpqqymmnfup1" path="res://scripts/main.gd" id="1_o5qli"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4pq2v"]
+size = Vector3(30, 1, 30)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o5qli"]
+albedo_color = Color(0, 0.15727746, 0.043676168, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_63jni"]
+material = SubResource("StandardMaterial3D_o5qli")
+size = Vector3(30, 1, 30)
+
 [node name="Main" type="Node3D" unique_id=1889051257]
+script = ExtResource("1_o5qli")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=787584873]
+
+[node name="Host" type="Button" parent="CanvasLayer" unique_id=1510390411]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Host"
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=620891989]
+_spawnable_scenes = PackedStringArray("uid://dqalabolous7s")
+spawn_path = NodePath("..")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1340811081]
+transform = Transform3D(0.99747103, -0.011401429, -0.070153415, 0.07107383, 0.16001107, 0.98455316, -1.4743065e-09, -0.9870494, 0.16041675, 0, 25.330498, 0)
+light_energy = 6.861
+
+[node name="Floor" type="StaticBody3D" parent="." unique_id=661068676]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=1834132151]
+shape = SubResource("BoxShape3D_4pq2v")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor" unique_id=663933077]
+mesh = SubResource("BoxMesh_63jni")
+
+[node name="SpawnPoint" type="Node3D" parent="." unique_id=128084572]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[connection signal="pressed" from="CanvasLayer/Host" to="." method="_on_host_pressed"]
+[connection signal="spawned" from="MultiplayerSpawner" to="." method="_on_multiplayer_spawner_spawned"]
