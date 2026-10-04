@@ -20,7 +20,7 @@ transform = Transform3D(0.9974711, -0.011401435, -0.07015339, 0.07107384, 0.1600
 light_energy = 6.861
 
 [node name="Player" parent="." unique_id=808011639 instance=ExtResource("1_ox6t3")]
-transform = Transform3D(0.99999994, 0, 9.313226e-10, 0, 0.99999994, 0, 9.313226e-10, 0, 0.99999994, 0, 1.5, 0)
+transform = Transform3D(0.99999994, 0, 9.313226e-10, 0, 0.99999994, 0, 9.313226e-10, 0, 0.99999994, 0, 0.5, 0)
 single_player = true
 
 [node name="Environment" type="Node3D" parent="." unique_id=917173973]

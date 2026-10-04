@@ -8,8 +8,8 @@ extends Camera3D
 @export var joystick_dead_zone := 0.15
 
 @export_group("Rotation Boundaries")
-@export var y_min := -90
-@export var y_max := 90
+@export var y_min := -70
+@export var y_max := 50
 
 @onready var player: Player = $".."
 
