@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://0hboglhvuudy"]
+
+[ext_resource type="Texture2D" uid="uid://d3k2austf4hvu" path="res://textures/smoke.png" id="4_ubh8u"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yr0m6"]
+albedo_color = Color(0.47068596, 0.19493899, 4.813075e-08, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4pq2v"]
+material = SubResource("StandardMaterial3D_yr0m6")
+top_radius = 0.03
+bottom_radius = 0.03
+height = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8w2rd"]
+transparency = 1
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+albedo_texture = ExtResource("4_ubh8u")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_e2ugr"]
+_data = [Vector2(0, 0.01815188), 0.0, 0.0, 0, 0, Vector2(0.14457831, 1), -0.14837678, -0.14837678, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_81l38"]
+texture_mode = 1
+curve = SubResource("Curve_e2ugr")
+
+[sub_resource type="Curve" id="Curve_mqdou"]
+_data = [Vector2(0, 0.25412548), 0.0, 0.18891545, 0, 0, Vector2(0.33132532, 0.57590765), 0.5399149, 0.5399149, 0, 0, Vector2(0.7093374, 0.689769), 0.45514107, 0.45514107, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_mqdou"]
+curve = SubResource("Curve_mqdou")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xct66"]
+particle_flag_rotate_y = true
+emission_shape = 1
+emission_sphere_radius = 0.05
+angle_min = -179.99998
+angle_max = 180.00002
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 0.29999998
+initial_velocity_max = 0.35
+angular_velocity_min = -50.000015
+angular_velocity_max = 49.99998
+gravity = Vector3(0, 0, 0)
+scale_min = 0.19999999
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_mqdou")
+alpha_curve = SubResource("CurveTexture_81l38")
+
+[sub_resource type="QuadMesh" id="QuadMesh_1y3wu"]
+
+[node name="Cigarette" type="Node3D" unique_id=573304104]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1687406967]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("CylinderMesh_4pq2v")
+
+[node name="Smoke" type="GPUParticles3D" parent="." unique_id=871603719]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.2)
+material_override = SubResource("StandardMaterial3D_8w2rd")
+amount = 50
+lifetime = 5.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_xct66")
+draw_pass_1 = SubResource("QuadMesh_1y3wu")

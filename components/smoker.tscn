@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://dmamx466to6ow"]
 
+[ext_resource type="PackedScene" uid="uid://0hboglhvuudy" path="res://components/cigarette.tscn" id="1_r7xtv"]
+
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_xct66"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4pq2v"]
@@ -22,3 +24,6 @@ mesh = SubResource("CapsuleMesh_1y3wu")
 [node name="Face" type="MeshInstance3D" parent="." unique_id=876049427]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.3)
 mesh = SubResource("BoxMesh_xct66")
+
+[node name="Cigarette" parent="." unique_id=573304104 instance=ExtResource("1_r7xtv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35150063, -0.7516459)
