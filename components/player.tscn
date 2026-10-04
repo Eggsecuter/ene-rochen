@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://b5suwovatu25c" path="res://scripts/player.gd" id="1_0g4kb"]
 [ext_resource type="Script" uid="uid://0yphr77frli8" path="res://scripts/camera.gd" id="2_51jd6"]
 [ext_resource type="Texture2D" uid="uid://bgy3mvnfmp1ec" path="res://models/smoker_fabio_fabio_basecolor.png" id="3_uapwn"]
+[ext_resource type="Texture2D" uid="uid://bryj8qaydq40n" path="res://textures/lungs-used.png" id="4_1kub6"]
+[ext_resource type="Texture2D" uid="uid://cgd4koer6qee1" path="res://textures/lungs.png" id="4_5odhx"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_51jd6"]
 properties/0/path = NodePath(".:position")
@@ -753,7 +755,7 @@ offset_top = -40.0
 offset_right = 40.0
 grow_vertical = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SmokeState" unique_id=1536173580]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/SmokeState" unique_id=175967885]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -761,6 +763,24 @@ anchor_bottom = 1.0
 offset_top = -40.0
 offset_right = 40.0
 grow_vertical = 0
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SmokeState/MarginContainer" unique_id=1536173580]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SmokeState/MarginContainer/HBoxContainer" unique_id=286060769]
+layout_mode = 2
+alignment = 2
+
+[node name="Cigarette" type="Control" parent="CanvasLayer/SmokeState/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1968193476]
+layout_mode = 2
+
+[node name="Lungs" type="TextureProgressBar" parent="CanvasLayer/SmokeState/MarginContainer/HBoxContainer" unique_id=537960168]
+layout_mode = 2
+fill_mode = 3
+texture_under = ExtResource("4_1kub6")
+texture_progress = ExtResource("4_5odhx")
 
 [node name="Controls" type="Control" parent="CanvasLayer" unique_id=2006348866]
 layout_mode = 3
