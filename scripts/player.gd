@@ -1,22 +1,22 @@
+class_name Player
 extends CharacterBody3D
 
+@export var single_player := false
 @export var speed := 6.0
-@export var jump_velocity := 4.5
+
+func is_authorized() -> bool:
+	return single_player or is_multiplayer_authority()
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(name.to_int(), true)
 
 func _physics_process(delta: float) -> void:
-	if not is_multiplayer_authority():
+	if not is_authorized():
 		return
 	
 	# gravity
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-	
-	# jump
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		velocity.y = jump_velocity
 	
 	# movement
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")

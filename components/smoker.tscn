@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://dmamx466to6ow"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_xct66"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4pq2v"]
+albedo_color = Color(1, 0.3473659, 0.7491585, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_1y3wu"]
+material = SubResource("StandardMaterial3D_4pq2v")
+
+[sub_resource type="BoxMesh" id="BoxMesh_xct66"]
+size = Vector3(0.6, 0.3, 0.5)
+
+[node name="Smoker" type="CharacterBody3D" unique_id=808011639]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=795212891]
+shape = SubResource("CapsuleShape3D_xct66")
+
+[node name="Body" type="MeshInstance3D" parent="." unique_id=1032494517]
+mesh = SubResource("CapsuleMesh_1y3wu")
+
+[node name="Face" type="MeshInstance3D" parent="." unique_id=876049427]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.3)
+mesh = SubResource("BoxMesh_xct66")
