@@ -40,6 +40,8 @@ transform = Transform3D(-0.6427875, 0, -0.76604456, 0, 1, 0, 0.76604456, 0, -0.6
 
 [node name="Smoker2" parent="Smokers" unique_id=219138269 instance=ExtResource("2_it7tt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -4, 1.5, -10)
+smoking_interval = 3.0
 
 [node name="Smoker3" parent="Smokers" unique_id=367667994 instance=ExtResource("2_it7tt")]
 transform = Transform3D(-0.71344894, 0, 0.7007072, 0, 1, 0, -0.7007072, 0, -0.71344894, 11, 1.5, -10)
+smoking_interval = 7.0
