@@ -15,6 +15,9 @@ extends Camera3D
 
 signal on_turn(y_delta: float)
 
+var _was_smoking := false
+var _smoking_tween: Tween
+
 func _ready() -> void:
 	var is_local_player: bool = player.is_authorized()
 	
@@ -24,15 +27,32 @@ func _ready() -> void:
 	set_process_input(is_local_player)
 	set_process_unhandled_input(is_local_player)
 	set_physics_process(is_local_player)
+	set_process(is_local_player)
 	
 	if is_local_player:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	_was_smoking = player.smoking
+	if _was_smoking:
+		rotation.x = 0.0
+
+func _process(_delta: float) -> void:
+	if not player.is_authorized() or player.smoking == _was_smoking:
+		return
+
+	_was_smoking = player.smoking
+	if not player.smoking:
+		return
+
+	if _smoking_tween and _smoking_tween.is_running():
+		_smoking_tween.kill()
+	_smoking_tween = create_tween()
+	_smoking_tween.tween_property(self, "rotation:x", 0.0, 0.35)
 
 # mouse look
 func _input(event: InputEvent) -> void:
 	if not player.is_authorized():
 		return
-	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if not player.smoking and event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		_apply_look(-event.relative * mouse_sensitivity)
 
 	if event.is_action_pressed("ui_cancel") and not event.is_echo():
@@ -40,7 +60,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not player.is_authorized():
+	if not player.is_authorized() or player.smoking:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
@@ -48,6 +68,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 # controller look
 func _physics_process(delta: float) -> void:
+	if player.smoking:
+		return
 	var look_delta = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 
 	# dead zone (prevents drift)
