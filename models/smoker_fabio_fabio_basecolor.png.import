@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d338pkvgcv7dm"
-path.s3tc="res://.godot/imported/smoker_fabio_basecolor.png-66ddad0223a5f0b4d81b712e5b88b4d9.s3tc.ctex"
+uid="uid://bgy3mvnfmp1ec"
+path.s3tc="res://.godot/imported/smoker_fabio_fabio_basecolor.png-a93065c70ebb332bf5eb450f2e6abe35.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://models/smoker_fabio_basecolor.png"
-dest_files=["res://.godot/imported/smoker_fabio_basecolor.png-66ddad0223a5f0b4d81b712e5b88b4d9.s3tc.ctex"]
+source_file="res://models/smoker_fabio_fabio_basecolor.png"
+dest_files=["res://.godot/imported/smoker_fabio_fabio_basecolor.png-a93065c70ebb332bf5eb450f2e6abe35.s3tc.ctex"]
 
 [params]
 

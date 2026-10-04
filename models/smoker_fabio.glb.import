@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dv82jego6uvtb"
-path="res://.godot/imported/smoker.glb-29769d623983643f63c3dffc0a140508.scn"
+uid="uid://cwy7sqx8yjqnh"
+path="res://.godot/imported/smoker_fabio.glb-aff4382f0d0daac43ef3614f897e8c7e.scn"
 
 [deps]
 
-source_file="res://models/smoker.glb"
-dest_files=["res://.godot/imported/smoker.glb-29769d623983643f63c3dffc0a140508.scn"]
+source_file="res://models/smoker_fabio.glb"
+dest_files=["res://.godot/imported/smoker_fabio.glb-aff4382f0d0daac43ef3614f897e8c7e.scn"]
 
 [params]
 
