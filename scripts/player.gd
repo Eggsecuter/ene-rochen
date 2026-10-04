@@ -3,6 +3,8 @@ extends CharacterBody3D
 
 const CIGARETTE = preload("uid://0hboglhvuudy")
 
+@onready var canvas_layer: CanvasLayer = $CanvasLayer
+
 @export var single_player := false
 @export var speed := 6.0
 @export var smoking_cooldown: float = 3.0
@@ -18,6 +20,7 @@ var _is_on_smoking_cooldown := false
 var _smoking_timer: Timer
 
 func _ready() -> void:
+	canvas_layer.visible = is_authorized()
 	_smoking_timer = Timer.new()
 	_smoking_timer.one_shot = true
 	_smoking_timer.timeout.connect(_end_smoking)

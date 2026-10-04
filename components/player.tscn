@@ -742,4 +742,97 @@ skeleton = NodePath("..")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86987305, 0)
 shape = SubResource("CapsuleShape3D_kuobi")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1281653676]
+
+[node name="SmokeState" type="Control" parent="CanvasLayer" unique_id=69091768]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SmokeState" unique_id=1536173580]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+
+[node name="Controls" type="Control" parent="CanvasLayer" unique_id=2006348866]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Controls" unique_id=1619719616]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -57.0
+offset_top = -89.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Controls/MarginContainer" unique_id=1136010670]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 2
+
+[node name="Stats" type="HBoxContainer" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer" unique_id=699939143]
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_rotation = 0.034906585
+alignment = 2
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Stats" unique_id=1360843112]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Stats" unique_id=594236555]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Stats"
+
+[node name="Smoke" type="HBoxContainer" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer" unique_id=379975864]
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_rotation = -0.05235988
+alignment = 2
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Smoke" unique_id=513658475]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Smoke" unique_id=1517214670]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Smoke"
+
+[node name="Photo" type="HBoxContainer" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer" unique_id=1729121200]
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_rotation = 0.017453292
+alignment = 2
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Photo" unique_id=90611445]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Photo" unique_id=1646723870]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Photo"
+
 [connection signal="on_turn" from="Camera3D" to="." method="_on_camera_3d_on_turn"]
