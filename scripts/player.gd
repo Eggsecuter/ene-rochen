@@ -9,6 +9,11 @@ const CIGARETTE = preload("uid://0hboglhvuudy")
 
 var cigarette: Cigarette
 var _is_smoking := false
+var smoking: bool = false:
+	set(value):
+		smoking = value
+		_is_smoking = value
+		_update_smoking_visual()
 var _is_on_smoking_cooldown := false
 var _smoking_timer: Timer
 
@@ -33,9 +38,7 @@ func _start_smoking() -> void:
 	if _is_smoking or _is_on_smoking_cooldown or not is_instance_valid(cigarette):
 		return
 
-	_is_smoking = true
-	cigarette.show()
-	cigarette.start_smoking()
+	smoking = true
 	_smoking_timer.start(2.0)
 
 
@@ -44,10 +47,7 @@ func _end_smoking() -> void:
 		return
 
 	_smoking_timer.stop()
-	_is_smoking = false
-	if is_instance_valid(cigarette):
-		cigarette.stop_smoking()
-		cigarette.hide()
+	smoking = false
 
 	_is_on_smoking_cooldown = true
 	_clear_smoking_cooldown_after_delay()
@@ -65,9 +65,16 @@ func _spawn_cigarette() -> void:
 	cigarette.hide()
 	cigarette.emptied.connect(_on_cigarette_emptied.bind(cigarette))
 	add_child(cigarette)
+	_update_smoking_visual()
+
+func _update_smoking_visual() -> void:
+	if not is_instance_valid(cigarette):
+		return
+	cigarette.visible = _is_smoking
 	if _is_smoking:
-		cigarette.show()
 		cigarette.start_smoking()
+	else:
+		cigarette.stop_smoking()
 
 func _on_cigarette_emptied(emptied_cigarette: Cigarette) -> void:
 	if emptied_cigarette != cigarette:
