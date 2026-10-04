@@ -24,6 +24,10 @@ Networking="*uid://ct7jlky5rf0y5"
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [input]
 
 move_forward={

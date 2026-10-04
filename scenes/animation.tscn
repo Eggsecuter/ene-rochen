@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://vlk5jcxc1tgw"]
+
+[ext_resource type="PackedScene" uid="uid://bri80b2lba72y" path="res://blender/04_export/smoker_walk.glb" id="1_p5qov"]
+
+[node name="Animation" type="Node3D" unique_id=1147592154]
+
+[node name="smoker_walk" parent="." unique_id=912562389 instance=ExtResource("1_p5qov")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0027649105, 0, -0.08597505)
