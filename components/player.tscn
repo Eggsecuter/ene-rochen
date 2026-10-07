@@ -1,8 +1,8 @@
 [gd_scene format=4 uid="uid://dqalabolous7s"]
 
 [ext_resource type="Script" uid="uid://b5suwovatu25c" path="res://scripts/player.gd" id="1_0g4kb"]
+[ext_resource type="Script" uid="uid://crv3nvrj1ftgt" path="res://shaders/retro.gd" id="2_0lm1f"]
 [ext_resource type="Script" uid="uid://0yphr77frli8" path="res://scripts/camera.gd" id="2_51jd6"]
-[ext_resource type="Shader" uid="uid://ch6q4cs1l5qbi" path="res://shaders/retro.gdshader" id="3_0lm1f"]
 [ext_resource type="Texture2D" uid="uid://bgy3mvnfmp1ec" path="res://models/smoker_fabio_fabio_basecolor.png" id="3_uapwn"]
 [ext_resource type="Texture2D" uid="uid://bryj8qaydq40n" path="res://textures/lungs-used.png" id="4_1kub6"]
 [ext_resource type="Texture2D" uid="uid://cgd4koer6qee1" path="res://textures/lungs.png" id="4_5odhx"]
@@ -19,17 +19,19 @@ properties/2/path = NodePath(".:smoking")
 properties/2/spawn = true
 properties/2/replication_mode = 1
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_0lm1f"]
-render_priority = 0
-shader = ExtResource("3_0lm1f")
-shader_parameter/pixel_size = 4.0
-shader_parameter/levels = 30.0
-shader_parameter/gamma = Vector2(0.125, 10)
+[sub_resource type="CompositorEffect" id="CompositorEffect_d6vnc"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("2_0lm1f")
+pixel_size = 2.0
+metadata/_custom_type_script = "uid://crv3nvrj1ftgt"
 
-[sub_resource type="QuadMesh" id="QuadMesh_kuobi"]
-material = SubResource("ShaderMaterial_0lm1f")
-flip_faces = true
-size = Vector2(2, 2)
+[sub_resource type="Compositor" id="Compositor_it7tt"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_d6vnc")])
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5lyd1"]
 resource_name = "fabio_base"
@@ -275,11 +277,8 @@ replication_config = SubResource("SceneReplicationConfig_51jd6")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=385361954]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.15)
+compositor = SubResource("Compositor_it7tt")
 script = ExtResource("2_51jd6")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Camera3D" unique_id=567988560]
-extra_cull_margin = 16384.0
-mesh = SubResource("QuadMesh_kuobi")
 
 [node name="Skeleton3D" type="Skeleton3D" parent="." unique_id=1603025568]
 transform = Transform3D(-1, 8.742277e-08, -3.8213705e-15, 0, -4.3711385e-08, -0.99999994, -8.742278e-08, -0.99999994, 4.3711385e-08, 0, 0, 0)
