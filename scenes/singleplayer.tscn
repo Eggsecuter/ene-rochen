@@ -6,22 +6,26 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_7pr2i"]
 size = Vector3(50, 1, 50)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o5qli"]
-albedo_color = Color(0, 0.15727746, 0.043676168, 1)
-
 [sub_resource type="BoxMesh" id="BoxMesh_ox6t3"]
-material = SubResource("StandardMaterial3D_o5qli")
 size = Vector3(50, 1, 50)
 
 [node name="Singleplayer" type="Node3D" unique_id=375287182]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1334401669]
-transform = Transform3D(0.9974711, -0.011401435, -0.07015339, 0.07107384, 0.16001107, 0.9845532, -1.4743066e-09, -0.9870494, 0.16041675, 0, 25.330498, 0)
-light_energy = 6.861
-
 [node name="Player" parent="." unique_id=808011639 instance=ExtResource("1_ox6t3")]
 transform = Transform3D(0.99999994, 0, 9.313226e-10, 0, 0.99999994, 0, 9.313226e-10, 0, 0.99999994, 0, 0.5, 0)
 single_player = true
+
+[node name="Lighting" type="Node3D" parent="." unique_id=1686868418]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Lighting" unique_id=486880405]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -5)
+light_color = Color(1, 0.9411765, 0.8156863, 1)
+light_specular = 5.156
+shadow_enabled = true
+shadow_bias = 0.05
+shadow_normal_bias = 0.5
+shadow_blur = 2.0
+omni_range = 10.0
 
 [node name="Environment" type="Node3D" parent="." unique_id=917173973]
 
@@ -36,12 +40,12 @@ mesh = SubResource("BoxMesh_ox6t3")
 [node name="Smokers" type="Node3D" parent="." unique_id=1021492762]
 
 [node name="Smoker" parent="Smokers" unique_id=1357186979 instance=ExtResource("2_it7tt")]
-transform = Transform3D(-0.6427875, 0, -0.76604456, 0, 1, 0, 0.76604456, 0, -0.6427875, -10, 1.5, -10)
+transform = Transform3D(-0.6427875, 0, -0.76604456, 0, 1, 0, 0.76604456, 0, -0.6427875, -10, 0.5, -10)
 
 [node name="Smoker2" parent="Smokers" unique_id=219138269 instance=ExtResource("2_it7tt")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -4, 1.5, -10)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -4, 0.5, -10)
 smoking_interval = 3.0
 
 [node name="Smoker3" parent="Smokers" unique_id=367667994 instance=ExtResource("2_it7tt")]
-transform = Transform3D(-0.71344894, 0, 0.7007072, 0, 1, 0, -0.7007072, 0, -0.71344894, 11, 1.5, -10)
+transform = Transform3D(-0.71344894, 0, 0.7007072, 0, 1, 0, -0.7007072, 0, -0.71344894, 11, 0.5, -10)
 smoking_interval = 7.0

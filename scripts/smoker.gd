@@ -15,7 +15,7 @@ func _spawn_cigarette() -> void:
 		return
 
 	cigarette = CIGARETTE.instantiate() as Cigarette
-	cigarette.position = Vector3(0.0, 0.35, -0.6)
+	cigarette.position = Vector3(0.0, 1.5, -0.5)
 	cigarette.hide()
 	cigarette.emptied.connect(_on_cigarette_emptied.bind(cigarette))
 	add_child(cigarette)
