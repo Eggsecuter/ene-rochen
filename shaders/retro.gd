@@ -33,6 +33,8 @@ void main() {
 """
 
 
+@export_category("Pixelation")
+
 @export_range(2.0, 20.0, 2.0)
 var pixel_size: float = 4.0:
 	set(value):
@@ -56,6 +58,37 @@ var gamma: Vector2 = Vector2(0.125, 8.0):
 	set(value):
 		mutex.lock()
 		gamma = value
+		shader_is_dirty = true
+		mutex.unlock()
+
+
+@export_category("Dithering")
+
+@export_range(0.0, 1.0, 0.01)
+var dither_strength: float = 0.20:
+	set(value):
+		mutex.lock()
+		dither_strength = value
+		shader_is_dirty = true
+		mutex.unlock()
+
+
+@export_category("Glow")
+
+@export_range(0.0, 1.0, 0.01)
+var glow_strength: float = 0.08:
+	set(value):
+		mutex.lock()
+		glow_strength = value
+		shader_is_dirty = true
+		mutex.unlock()
+
+
+@export_range(0.0, 2.0, 0.01)
+var glow_threshold: float = 0.75:
+	set(value):
+		mutex.lock()
+		glow_threshold = value
 		shader_is_dirty = true
 		mutex.unlock()
 
@@ -134,61 +167,172 @@ func _build_shader_code() -> String:
 	return """
 		float pixel_size_value = %.6f;
 		float levels_value = %.6f;
-		vec2 gamma_value = vec2(%.6f, %.6f);
 
-		// Current pixel -> normalized screen UV.
-		vec2 screen_uv = vec2(pixel_coord) / params.raster_size;
+		vec2 gamma_value = vec2(
+			%.6f,
+			%.6f
+		);
 
-		// Pixelate the screen.
-		vec2 pixel_count = params.raster_size / pixel_size_value;
+		float dither_strength_value = %.6f;
+		float glow_strength_value = %.6f;
+		float glow_threshold_value = %.6f;
+
+
+		// ------------------------------------------------------------
+		// PIXELATION
+		// ------------------------------------------------------------
+
+		vec2 screen_uv =
+			vec2(pixel_coord) / params.raster_size;
+
+		vec2 pixel_count =
+			params.raster_size / pixel_size_value;
 
 		vec2 pixelated_uv =
-			floor(screen_uv * pixel_count) / pixel_count;
+			floor(screen_uv * pixel_count)
+			/ pixel_count;
 
 		ivec2 sample_position = ivec2(
 			pixelated_uv * params.raster_size
 		);
 
-		// Read the pixelated pixel.
 		color = imageLoad(
 			color_image,
 			sample_position
 		);
 
-		// First gamma adjustment.
+
+		// ------------------------------------------------------------
+		// FIRST GAMMA
+		// ------------------------------------------------------------
+
 		color.rgb = pow(
 			max(color.rgb, vec3(0.0)),
 			vec3(gamma_value.x)
 		);
 
-		// Posterize based on the brightest RGB channel.
+
+		// ------------------------------------------------------------
+		// SUBTLE STYLIZED GLOW
+		//
+		// This isn't a bloom blur. Instead, bright pixels receive
+		// a very small luminance boost.
+		// ------------------------------------------------------------
+
+		float brightness = max(
+			color.r,
+			max(color.g, color.b)
+		);
+
+		float glow_mask = smoothstep(
+			glow_threshold_value,
+			1.0,
+			brightness
+		);
+
+		color.rgb +=
+			color.rgb
+			* glow_mask
+			* glow_strength_value;
+
+
+		// ------------------------------------------------------------
+		// ORDERED 4x4 DITHER
+		// ------------------------------------------------------------
+
+		int x = pixel_coord.x & 3;
+		int y = pixel_coord.y & 3;
+
+		float dither_value = 0.0;
+
+		if (y == 0) {
+			if (x == 0) dither_value = 0.0;
+			if (x == 1) dither_value = 8.0;
+			if (x == 2) dither_value = 2.0;
+			if (x == 3) dither_value = 10.0;
+		}
+
+		if (y == 1) {
+			if (x == 0) dither_value = 12.0;
+			if (x == 1) dither_value = 4.0;
+			if (x == 2) dither_value = 14.0;
+			if (x == 3) dither_value = 6.0;
+		}
+
+		if (y == 2) {
+			if (x == 0) dither_value = 3.0;
+			if (x == 1) dither_value = 11.0;
+			if (x == 2) dither_value = 1.0;
+			if (x == 3) dither_value = 9.0;
+		}
+
+		if (y == 3) {
+			if (x == 0) dither_value = 15.0;
+			if (x == 1) dither_value = 7.0;
+			if (x == 2) dither_value = 13.0;
+			if (x == 3) dither_value = 5.0;
+		}
+
+		float dither =
+			(dither_value / 16.0 - 0.5)
+			* dither_strength_value;
+
+
+		// ------------------------------------------------------------
+		// POSTERIZATION
+		// ------------------------------------------------------------
+
 		float grayscale = max(
 			color.r,
 			max(color.g, color.b)
 		);
 
+		// Apply dither before selecting the nearest color level.
+		float dithered_grayscale =
+			clamp(
+				grayscale + dither / levels_value,
+				0.0,
+				1.0
+			);
+
 		float lower =
-			floor(grayscale * levels_value)
+			floor(
+				dithered_grayscale
+				* levels_value
+			)
 			/ levels_value;
 
 		float higher =
-			ceil(grayscale * levels_value)
+			ceil(
+				dithered_grayscale
+				* levels_value
+			)
 			/ levels_value;
 
 		float lower_difference =
-			abs(lower - grayscale);
+			abs(
+				lower
+				- dithered_grayscale
+			);
 
 		float higher_difference =
-			abs(higher - grayscale);
+			abs(
+				higher
+				- dithered_grayscale
+			);
 
 		float level =
 			lower_difference < higher_difference
 			? lower
 			: higher;
 
+
+		// ------------------------------------------------------------
+		// PRESERVE ORIGINAL COLOR
+		// ------------------------------------------------------------
+
 		float color_adjustment = 0.0;
 
-		// Avoid division by zero for black pixels.
 		if (grayscale > 0.00001) {
 			color_adjustment =
 				level / grayscale;
@@ -196,16 +340,29 @@ func _build_shader_code() -> String:
 
 		color.rgb *= color_adjustment;
 
-		// Second gamma adjustment.
+
+		// ------------------------------------------------------------
+		// SECOND GAMMA
+		// ------------------------------------------------------------
+
 		color.rgb = pow(
 			max(color.rgb, vec3(0.0)),
 			vec3(gamma_value.y)
+		);
+
+		color.rgb = clamp(
+			color.rgb,
+			vec3(0.0),
+			vec3(1.0)
 		);
 	""" % [
 		pixel_size,
 		levels,
 		gamma.x,
-		gamma.y
+		gamma.y,
+		dither_strength,
+		glow_strength,
+		glow_threshold
 	]
 
 
@@ -233,8 +390,8 @@ func _render_callback(
 		if size.x == 0 or size.y == 0:
 			return
 
-		var x_groups := (size.x - 1) / 8 + 1
-		var y_groups := (size.y - 1) / 8 + 1
+		var x_groups := ceili(size.x / 8.0)
+		var y_groups := ceili(size.y / 8.0)
 		var z_groups := 1
 
 		var push_constant := PackedFloat32Array()

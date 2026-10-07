@@ -28,6 +28,9 @@ needs_motion_vectors = false
 needs_normal_roughness = false
 script = ExtResource("2_0lm1f")
 pixel_size = 2.0
+dither_strength = 0.15
+glow_strength = 0.05
+glow_threshold = 0.8
 metadata/_custom_type_script = "uid://crv3nvrj1ftgt"
 
 [sub_resource type="Compositor" id="Compositor_it7tt"]
