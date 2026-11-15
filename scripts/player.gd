@@ -18,12 +18,14 @@ signal stepped(height: float)
 @onready var cigarette_progress: TextureRect = %CigaretteProgress
 @onready var stats_panel: StatsPanel = %StatsPanel
 @onready var smoke_control: Control = %Smoke
+@onready var mouth: Node3D = $Mouth
 
 @export var single_player := false
 @export var speed := 6.0
 @export var max_step_height := 0.35
 @export var smoking_duration: float = 2.0
 @export var smoking_cooldown: float = 3.0
+@export var exhale_delay: float = 0.5
 
 var cigarette: Cigarette
 var _is_smoking := false
@@ -73,7 +75,8 @@ func _update_hud() -> void:
 	if _is_smoking:
 		lungs.value = _get_smoking_lungs_fill()
 	elif _is_on_smoking_cooldown:
-		lungs.value = _lungs_fill_at_cooldown * _cooldown_timer.time_left / smoking_cooldown
+		# hold the smoke for the exhale delay before the lungs start clearing
+		lungs.value = _lungs_fill_at_cooldown * minf(_cooldown_timer.time_left / smoking_cooldown, 1.0)
 	else:
 		lungs.value = 0.0
 
@@ -105,14 +108,14 @@ func _end_smoking() -> void:
 	smoking = false
 
 	_is_on_smoking_cooldown = true
-	_cooldown_timer.start(smoking_cooldown)
+	_cooldown_timer.start(exhale_delay + smoking_cooldown)
 
 func _spawn_cigarette() -> void:
 	if is_instance_valid(cigarette):
 		return
 
 	cigarette = CIGARETTE.instantiate() as Cigarette
-	cigarette.position = Vector3(0.0, 1.5, -0.5)
+	cigarette.position = mouth.position
 	cigarette.hide()
 	cigarette.emptied.connect(_on_cigarette_emptied.bind(cigarette))
 	add_child(cigarette)

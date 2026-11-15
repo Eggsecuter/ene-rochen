@@ -1,0 +1,36 @@
+[gd_resource type="ParticleProcessMaterial" format=3 uid="uid://dg875tvqcu8tv"]
+
+[sub_resource type="Curve" id="Curve_e2ugr"]
+_data = [Vector2(0, 0.01815188), 0.0, 0.0, 0, 0, Vector2(0.14457831, 1), -0.14837678, -0.14837678, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_33uax"]
+texture_mode = 1
+curve = SubResource("Curve_e2ugr")
+
+[sub_resource type="Curve" id="Curve_mqdou"]
+_data = [Vector2(0, 0.25412548), 0.0, 0.18891545, 0, 0, Vector2(0.33132532, 0.57590765), 0.5399149, 0.5399149, 0, 0, Vector2(0.7093374, 0.689769), 0.45514107, 0.45514107, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_41glt"]
+curve = SubResource("Curve_mqdou")
+
+[resource]
+particle_flag_rotate_y = true
+emission_shape = 1
+emission_sphere_radius = 0.05
+angle_min = -179.99998
+angle_max = 180.00002
+direction = Vector3(0, 0, -1)
+spread = 0.0
+initial_velocity_min = 2.0
+initial_velocity_max = 2.0
+angular_velocity_min = -50.000015
+angular_velocity_max = 49.99998
+gravity = Vector3(0, 0.3, 0)
+damping_min = 0.2
+damping_max = 0.3
+scale_min = 0.19999999
+scale_max = 0.19999999
+scale_curve = SubResource("CurveTexture_41glt")
+alpha_curve = SubResource("CurveTexture_33uax")

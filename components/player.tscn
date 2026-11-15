@@ -911,4 +911,7 @@ text = "Photo"
 [node name="StatsPanel" parent="CanvasLayer" unique_id=1402958114 instance=ExtResource("11_stats")]
 unique_name_in_owner = true
 
+[node name="Mouth" type="Node3D" parent="." unique_id=1205411448]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5678144, -0.21705851)
+
 [connection signal="on_turn" from="Camera3D" to="." method="_on_camera_3d_on_turn"]

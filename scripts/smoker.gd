@@ -4,6 +4,9 @@ const CIGARETTE = preload("uid://0hboglhvuudy")
 
 @export var smoking_interval: float = 5.0
 
+@onready var mouth: Node3D = $Mouth
+@onready var smoke: GPUParticles3D = $Mouth/Smoke
+
 var cigarette: Cigarette
 
 func _ready() -> void:
@@ -15,7 +18,7 @@ func _spawn_cigarette() -> void:
 		return
 
 	cigarette = CIGARETTE.instantiate() as Cigarette
-	cigarette.position = Vector3(0.0, 1.5, -0.5)
+	cigarette.position = mouth.position
 	cigarette.hide()
 	cigarette.emptied.connect(_on_cigarette_emptied.bind(cigarette))
 	add_child(cigarette)
@@ -38,6 +41,11 @@ func _smoke_periodically() -> void:
 		smoking_cigarette.show()
 		smoking_cigarette.start_smoking()
 		await get_tree().create_timer(2.0).timeout
+		
 		if is_instance_valid(smoking_cigarette):
 			smoking_cigarette.stop_smoking()
 			smoking_cigarette.hide()
+		
+		smoke.emitting = true;
+		await get_tree().create_timer(2.0).timeout
+		smoke.emitting = false;

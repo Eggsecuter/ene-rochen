@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://0hboglhvuudy"]
 
 [ext_resource type="Script" uid="uid://dvr7yrgw51qis" path="res://scripts/cigarette.gd" id="1_2oy88"]
+[ext_resource type="Material" uid="uid://gbuq17f3cgau" path="res://particles/cigarette_smoke.tres" id="3_kstqr"]
 [ext_resource type="Texture2D" uid="uid://d3k2austf4hvu" path="res://textures/smoke.png" id="4_ubh8u"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2oy88"]
@@ -28,42 +29,10 @@ particles_anim_h_frames = 1
 particles_anim_v_frames = 1
 particles_anim_loop = false
 
-[sub_resource type="Curve" id="Curve_e2ugr"]
-_data = [Vector2(0, 0.01815188), 0.0, 0.0, 0, 0, Vector2(0.14457831, 1), -0.14837678, -0.14837678, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_81l38"]
-texture_mode = 1
-curve = SubResource("Curve_e2ugr")
-
-[sub_resource type="Curve" id="Curve_mqdou"]
-_data = [Vector2(0, 0.25412548), 0.0, 0.18891545, 0, 0, Vector2(0.33132532, 0.57590765), 0.5399149, 0.5399149, 0, 0, Vector2(0.7093374, 0.689769), 0.45514107, 0.45514107, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_mqdou"]
-curve = SubResource("Curve_mqdou")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xct66"]
-particle_flag_rotate_y = true
-emission_shape = 1
-emission_sphere_radius = 0.05
-angle_min = -179.99998
-angle_max = 180.00002
-direction = Vector3(0, 1, 0)
-spread = 0.0
-initial_velocity_min = 0.29999998
-initial_velocity_max = 0.35
-angular_velocity_min = -50.000015
-angular_velocity_max = 49.99998
-gravity = Vector3(0, 0, 0)
-scale_min = 0.19999999
-scale_max = 0.5
-scale_curve = SubResource("CurveTexture_mqdou")
-alpha_curve = SubResource("CurveTexture_81l38")
-
 [sub_resource type="QuadMesh" id="QuadMesh_1y3wu"]
 
 [node name="Cigarette" type="Node3D" unique_id=573304104]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
 script = ExtResource("1_2oy88")
 
 [node name="Filter" type="MeshInstance3D" parent="." unique_id=1687406967]
@@ -80,5 +49,11 @@ material_override = SubResource("StandardMaterial3D_8w2rd")
 amount = 50
 lifetime = 5.0
 fixed_fps = 60
-process_material = SubResource("ParticleProcessMaterial_xct66")
+process_material = ExtResource("3_kstqr")
 draw_pass_1 = SubResource("QuadMesh_1y3wu")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Burnable" unique_id=1120213398]
+transform = Transform3D(5, 0, 0, 0, 5, -4.2632564e-14, 0, 4.2632564e-14, 5, 0, -0.22052175, 8.970309e-10)
+light_color = Color(0.80518615, 0.14998478, 1.92523e-07, 1)
+light_energy = 5.0
+omni_range = 0.01

@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://1sy8ojquruwq" path="res://scripts/smoker.gd" id="1_x4pfi"]
 [ext_resource type="Texture2D" uid="uid://bgy3mvnfmp1ec" path="res://models/smoker_fabio_fabio_basecolor.png" id="2_x4pfi"]
+[ext_resource type="Texture2D" uid="uid://d3k2austf4hvu" path="res://textures/smoke.png" id="3_rmgmq"]
+[ext_resource type="Material" uid="uid://dg875tvqcu8tv" path="res://particles/exhale_smoke.tres" id="4_cxmij"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5lyd1"]
 resource_name = "fabio_base"
@@ -238,6 +240,19 @@ bind/66/pose = Transform3D(-4.314871e-08, 0.9999999, 6.695601e-07, -1, -4.314686
 margin = 0.0
 radius = 0.3
 height = 1.7
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cxmij"]
+transparency = 1
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+albedo_texture = ExtResource("3_rmgmq")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_g4jcd"]
 
 [node name="Smoker" type="CharacterBody3D" unique_id=808011639]
 script = ExtResource("1_x4pfi")
@@ -722,3 +737,16 @@ skeleton = NodePath("..")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=506677758]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86987305, 0)
 shape = SubResource("CapsuleShape3D_1fepa")
+
+[node name="Mouth" type="Node3D" parent="." unique_id=1817031648]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5589364, -0.13015246)
+
+[node name="Smoke" type="GPUParticles3D" parent="Mouth" unique_id=191874053]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0.03520903)
+material_override = SubResource("StandardMaterial3D_cxmij")
+emitting = false
+amount = 100
+lifetime = 5.0
+fixed_fps = 60
+process_material = ExtResource("4_cxmij")
+draw_pass_1 = SubResource("QuadMesh_g4jcd")
