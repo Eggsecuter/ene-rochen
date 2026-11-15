@@ -12,7 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://bu4ix7llu0wh2" path="res://textures/mouseright.png" id="10_eju5v"]
 [ext_resource type="PackedScene" path="res://components/stats_panel.tscn" id="11_stats"]
 [ext_resource type="Texture2D" uid="uid://d3k2austf4hvu" path="res://textures/smoke.png" id="12_smoke"]
-[ext_resource type="Material" uid="uid://bwesb9m14h1td" path="res://particles/exhale_smoke.tres" id="13_exhale"]
+[ext_resource type="Material" uid="uid://dg875tvqcu8tv" path="res://particles/exhale_smoke.tres" id="13_exhale"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_51jd6"]
 properties/0/path = NodePath(".:position")
