@@ -11,6 +11,9 @@ extends Camera3D
 @export var y_min := -70
 @export var y_max := 50
 
+@export_group("Step Smoothing")
+@export var step_smoothing_speed := 12.0
+
 @onready var player: Player = $".."
 
 signal on_turn(y_delta: float)
@@ -19,6 +22,9 @@ var _was_smoking := false
 var _smoking_tween: Tween
 # mouse look is collected in _input and applied in _physics_process for physics interpolation
 var _pending_mouse_look := Vector2.ZERO
+# vertical offset left over from stepping up, eased back to zero so the view doesn't snap
+var _step_offset := 0.0
+var _base_height := 0.0
 
 func _ready() -> void:
 	var is_local_player: bool = player.is_authorized()
@@ -30,6 +36,9 @@ func _ready() -> void:
 	set_process_unhandled_input(is_local_player)
 	set_physics_process(is_local_player)
 	set_process(is_local_player)
+	
+	_base_height = position.y
+	player.stepped.connect(_on_player_stepped)
 	
 	if is_local_player:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -69,6 +78,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _physics_process(delta: float) -> void:
+	_update_step_smoothing(delta)
+
 	if player.smoking:
 		_pending_mouse_look = Vector2.ZERO
 		return
@@ -92,6 +103,17 @@ func _physics_process(delta: float) -> void:
 	look_delta.y = -look_delta.y
 
 	_apply_look(look_delta * joystick_sensitivity * delta)
+
+func _on_player_stepped(height: float) -> void:
+	_step_offset -= height
+
+func _update_step_smoothing(delta: float) -> void:
+	if is_zero_approx(_step_offset):
+		return
+	_step_offset = lerp(_step_offset, 0.0, 1.0 - exp(-step_smoothing_speed * delta))
+	if absf(_step_offset) < 0.001:
+		_step_offset = 0.0
+	position.y = _base_height + _step_offset
 
 func _apply_look(delta: Vector2):
 	rotation.x += delta.y

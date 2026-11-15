@@ -11,6 +11,8 @@ const CIGARETTE_STAGES: Array[Texture2D] = [
 ]
 const DISABLED_CONTROL_COLOR := Color(0.4, 0.4, 0.4, 0.6)
 
+signal stepped(height: float)
+
 @onready var canvas_layer: CanvasLayer = $CanvasLayer
 @onready var lungs: TextureProgressBar = %Lungs
 @onready var cigarette_progress: TextureRect = %CigaretteProgress
@@ -19,6 +21,7 @@ const DISABLED_CONTROL_COLOR := Color(0.4, 0.4, 0.4, 0.6)
 
 @export var single_player := false
 @export var speed := 6.0
+@export var max_step_height := 0.35
 @export var smoking_duration: float = 2.0
 @export var smoking_cooldown: float = 3.0
 
@@ -37,6 +40,7 @@ var _cigarette_progress_texture: AtlasTexture
 var smoked_cigarettes := 0
 
 func _ready() -> void:
+	floor_snap_length = max_step_height
 	canvas_layer.visible = is_authorized()
 	stats_panel.set_process_input(is_authorized())
 	_smoking_timer = Timer.new()
@@ -163,7 +167,58 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0, speed)
 		velocity.z = move_toward(velocity.z, 0, speed)
 	
+	_try_step_up(delta)
 	move_and_slide()
+
+# lifts the player onto a step if the horizontal motion is blocked by a ledge low enough to walk onto
+func _try_step_up(delta: float) -> void:
+	if not is_on_floor():
+		return
+
+	var horizontal_motion := Vector3(velocity.x, 0, velocity.z) * delta
+	if horizontal_motion.is_zero_approx():
+		return
+
+	var params := PhysicsTestMotionParameters3D.new()
+	var result := PhysicsTestMotionResult3D.new()
+
+	# only step when blocked by something wall-like at the current height
+	params.from = global_transform
+	params.motion = horizontal_motion
+	if not PhysicsServer3D.body_test_motion(get_rid(), params, result):
+		return
+	if result.get_collision_normal().angle_to(up_direction) <= floor_max_angle:
+		return
+
+	# raise by the step height (or less if there is a ceiling)
+	var test_transform := global_transform
+	params.from = test_transform
+	params.motion = up_direction * max_step_height
+	PhysicsServer3D.body_test_motion(get_rid(), params, result)
+	test_transform.origin += result.get_travel()
+
+	# move forward at the raised height, a wall here means the ledge is too high
+	params.from = test_transform
+	params.motion = horizontal_motion
+	if PhysicsServer3D.body_test_motion(get_rid(), params, result):
+		return
+	test_transform.origin += horizontal_motion
+
+	# drop back down onto the step
+	params.from = test_transform
+	params.motion = -up_direction * max_step_height
+	if not PhysicsServer3D.body_test_motion(get_rid(), params, result):
+		return
+	if result.get_collision_normal().angle_to(up_direction) > floor_max_angle:
+		return
+
+	var step_height := (test_transform.origin + result.get_travel() - global_position).dot(up_direction)
+	if step_height <= 0.0:
+		return
+
+	global_position += up_direction * step_height
+	velocity.y = 0.0
+	stepped.emit(step_height)
 
 func _on_camera_3d_on_turn(y_delta: float) -> void:
 	rotation.y += y_delta
