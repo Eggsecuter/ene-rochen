@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bcpqqymmnfup1" path="res://scripts/main.gd" id="1_o5qli"]
 [ext_resource type="ArrayMesh" uid="uid://bi52dcmmw6lmq" path="res://models/EN_BasePlane.obj" id="2_0wfyh"]
+[ext_resource type="Environment" uid="uid://bai08xampgokm" path="res://lighting/environment.tres" id="2_sugp2"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_o5qli"]
 size = Vector3(50, 1, 50)
@@ -11,6 +12,9 @@ size = Vector3(50, 1, 50)
 
 [node name="Main" type="Node3D" unique_id=1889051257]
 script = ExtResource("1_o5qli")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1612476968]
+environment = ExtResource("2_sugp2")
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=620891989]
 _spawnable_scenes = PackedStringArray("uid://dqalabolous7s")
