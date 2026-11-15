@@ -40,7 +40,7 @@ shape = SubResource("BoxShape3D_o5qli")
 mesh = SubResource("BoxMesh_0wfyh")
 
 [node name="SpawnPoint" type="Node3D" parent="." unique_id=128084572]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.5)
 
 [node name="EnBasePlane" type="MeshInstance3D" parent="." unique_id=1362919607]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, 1)
