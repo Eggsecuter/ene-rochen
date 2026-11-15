@@ -17,6 +17,8 @@ signal on_turn(y_delta: float)
 
 var _was_smoking := false
 var _smoking_tween: Tween
+# mouse look is collected in _input and applied in _physics_process for physics interpolation
+var _pending_mouse_look := Vector2.ZERO
 
 func _ready() -> void:
 	var is_local_player: bool = player.is_authorized()
@@ -45,7 +47,7 @@ func _process(_delta: float) -> void:
 
 	if _smoking_tween and _smoking_tween.is_running():
 		_smoking_tween.kill()
-	_smoking_tween = create_tween()
+	_smoking_tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
 	_smoking_tween.tween_property(self, "rotation:x", 0.0, 0.35)
 
 # mouse look
@@ -53,7 +55,7 @@ func _input(event: InputEvent) -> void:
 	if not player.is_authorized():
 		return
 	if not player.smoking and event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		_apply_look(-event.relative * mouse_sensitivity)
+		_pending_mouse_look += -event.relative * mouse_sensitivity
 
 	if event.is_action_pressed("ui_cancel") and not event.is_echo():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -66,10 +68,17 @@ func _unhandled_input(event: InputEvent) -> void:
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-# controller look
 func _physics_process(delta: float) -> void:
 	if player.smoking:
+		_pending_mouse_look = Vector2.ZERO
 		return
+
+	# mouse look
+	if _pending_mouse_look != Vector2.ZERO:
+		_apply_look(_pending_mouse_look)
+		_pending_mouse_look = Vector2.ZERO
+
+	# controller look
 	var look_delta = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 
 	# dead zone (prevents drift)

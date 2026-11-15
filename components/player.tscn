@@ -7,6 +7,10 @@
 [ext_resource type="Texture2D" uid="uid://bryj8qaydq40n" path="res://textures/lungs-used.png" id="4_1kub6"]
 [ext_resource type="Texture2D" uid="uid://cgd4koer6qee1" path="res://textures/lungs.png" id="4_5odhx"]
 [ext_resource type="FontFile" uid="uid://cb7fa8yvknf6" path="res://fonts/ithaca-font/Ithaca-LVB75.ttf" id="6_kuobi"]
+[ext_resource type="Texture2D" uid="uid://w3l2j2j6b0cy" path="res://textures/tab.png" id="7_mm1xv"]
+[ext_resource type="Texture2D" uid="uid://0gh4m35tkkab" path="res://textures/mouseleft.png" id="9_qe8hj"]
+[ext_resource type="Texture2D" uid="uid://bu4ix7llu0wh2" path="res://textures/mouseright.png" id="10_eju5v"]
+[ext_resource type="PackedScene" path="res://components/stats_panel.tscn" id="11_stats"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_51jd6"]
 properties/0/path = NodePath(".:position")
@@ -786,21 +790,31 @@ grow_vertical = 0
 theme_override_constants/margin_left = 50
 theme_override_constants/margin_bottom = 50
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SmokeState/MarginContainer" unique_id=1536173580]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SmokeState/MarginContainer" unique_id=286060769]
 layout_mode = 2
+theme_override_constants/separation = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SmokeState/MarginContainer/HBoxContainer" unique_id=286060769]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SmokeState/MarginContainer/VBoxContainer" unique_id=1536173580]
 layout_mode = 2
-alignment = 2
+theme_override_constants/separation = 20
 
-[node name="Cigarette" type="Control" parent="CanvasLayer/SmokeState/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1968193476]
+[node name="CigaretteProgress" type="TextureRect" parent="CanvasLayer/SmokeState/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1968193476]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(45, 200)
 layout_mode = 2
+size_flags_vertical = 8
+expand_mode = 1
+stretch_mode = 5
 
-[node name="Lungs" type="TextureProgressBar" parent="CanvasLayer/SmokeState/MarginContainer/HBoxContainer" unique_id=537960168]
+[node name="Lungs" type="TextureProgressBar" parent="CanvasLayer/SmokeState/MarginContainer/VBoxContainer/HBoxContainer" unique_id=537960168]
+unique_name_in_owner = true
 layout_mode = 2
+offset_transform_enabled = true
+max_value = 1.0
+step = 0.0
 fill_mode = 3
-texture_under = ExtResource("4_1kub6")
-texture_progress = ExtResource("4_5odhx")
+texture_under = ExtResource("4_5odhx")
+texture_progress = ExtResource("4_1kub6")
 
 [node name="Controls" type="Control" parent="CanvasLayer" unique_id=2006348866]
 layout_mode = 3
@@ -830,17 +844,22 @@ theme_override_constants/margin_bottom = 50
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Controls/MarginContainer" unique_id=1136010670]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 50
 alignment = 2
 
 [node name="Stats" type="HBoxContainer" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer" unique_id=699939143]
 layout_mode = 2
 offset_transform_enabled = true
-offset_transform_rotation = 0.034906585
+offset_transform_rotation = 0.017453292
 alignment = 2
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Stats" unique_id=1360843112]
 layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(-50, 0)
+offset_transform_scale = Vector2(4.5, 4.5)
+texture = ExtResource("7_mm1xv")
+expand_mode = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Stats" unique_id=594236555]
 layout_mode = 2
@@ -849,6 +868,7 @@ theme_override_font_sizes/font_size = 48
 text = "Stats"
 
 [node name="Smoke" type="HBoxContainer" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer" unique_id=379975864]
+unique_name_in_owner = true
 layout_mode = 2
 offset_transform_enabled = true
 offset_transform_rotation = -0.05235988
@@ -856,6 +876,11 @@ alignment = 2
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Smoke" unique_id=513658475]
 layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(-20, 0)
+offset_transform_scale = Vector2(2.5, 2.5)
+texture = ExtResource("9_qe8hj")
+expand_mode = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Smoke" unique_id=1517214670]
 layout_mode = 2
@@ -871,11 +896,19 @@ alignment = 2
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Photo" unique_id=90611445]
 layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(-20, 0)
+offset_transform_scale = Vector2(2.5, 2.5)
+texture = ExtResource("10_eju5v")
+expand_mode = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer/Photo" unique_id=1646723870]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_kuobi")
 theme_override_font_sizes/font_size = 48
 text = "Photo"
+
+[node name="StatsPanel" parent="CanvasLayer" unique_id=1402958114 instance=ExtResource("11_stats")]
+unique_name_in_owner = true
 
 [connection signal="on_turn" from="Camera3D" to="." method="_on_camera_3d_on_turn"]
