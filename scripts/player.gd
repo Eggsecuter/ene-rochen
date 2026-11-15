@@ -21,6 +21,7 @@ signal stepped(height: float)
 @onready var photo_control: Control = %Photo
 @onready var mouth: Node3D = $Mouth
 @onready var smoke: GPUParticles3D = $Mouth/Smoke
+@onready var camera: Camera3D = $Camera3D
 @onready var phone: Phone = $Camera3D/Phone
 
 @export var single_player := false
@@ -47,7 +48,25 @@ var _smoking_timer: Timer
 var _cooldown_timer: Timer
 var _lungs_fill_at_cooldown := 0.0
 var _cigarette_progress_texture: AtlasTexture
-var smoked_cigarettes := 0
+var smoked_cigarettes := 0:
+	set(value):
+		smoked_cigarettes = value
+		if is_node_ready():
+			stats_panel.cigarette_counter.count = value
+# replicated so remote cigarettes burn down in step with the owner's
+var cigarette_left: float:
+	get:
+		return cigarette.amount_left if is_instance_valid(cigarette) else 1.0
+	set(value):
+		if not is_authorized() and is_instance_valid(cigarette):
+			cigarette.amount_left = value
+# [time, position, yaw, pitch] of the owner, interpolated on remote peers
+var net_state: Array = []:
+	set(value):
+		net_state = value
+		if not is_authorized() and value.size() == 4:
+			_snapshots.push(value[0], value[1], value[2], value[3])
+var _snapshots := SnapshotBuffer.new()
 # every photo this player took, on every peer
 var photos: Array[Texture2D] = []
 # replicated so other players see the phone being drawn
@@ -74,6 +93,7 @@ func _ready() -> void:
 	_cigarette_progress_texture = AtlasTexture.new()
 	_cigarette_progress_texture.region = CigaretteCounter.CIGARETTE_REGION
 	cigarette_progress.texture = _cigarette_progress_texture
+	stats_panel.cigarette_counter.count = smoked_cigarettes
 	_spawn_cigarette()
 
 func is_authorized() -> bool:
@@ -179,6 +199,7 @@ func _spawn_cigarette() -> void:
 	cigarette.position = mouth.position
 	cigarette.hide()
 	cigarette.emptied.connect(_on_cigarette_emptied.bind(cigarette))
+	cigarette.burning = is_authorized()
 	add_child(cigarette)
 	_update_smoking_visual()
 
@@ -192,7 +213,8 @@ func _update_smoking_visual() -> void:
 		cigarette.stop_smoking()
 
 func _on_cigarette_emptied(emptied_cigarette: Cigarette) -> void:
-	if emptied_cigarette != cigarette:
+	# remote cigarettes follow the replicated amount, the owner decides when one is finished
+	if emptied_cigarette != cigarette or not is_authorized():
 		return
 
 	if _is_smoking:
@@ -201,15 +223,28 @@ func _on_cigarette_emptied(emptied_cigarette: Cigarette) -> void:
 	cigarette = null
 	emptied_cigarette.queue_free()
 	smoked_cigarettes += 1
-	stats_panel.cigarette_counter.count = smoked_cigarettes
 	_spawn_cigarette()
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(name.to_int(), true)
 
 func _physics_process(delta: float) -> void:
-	if not is_authorized():
+	if is_authorized():
+		_move(delta)
+		net_state = [Time.get_ticks_usec() / 1_000_000.0, global_position, rotation.y, camera.rotation.x]
+	else:
+		_apply_remote_state()
+
+# applied in the physics tick so physics interpolation smooths it between ticks
+func _apply_remote_state() -> void:
+	var state := _snapshots.sample()
+	if not state:
 		return
+	global_position = state.position
+	rotation.y = state.yaw
+	camera.rotation.x = state.pitch
+
+func _move(delta: float) -> void:
 	if _is_smoking or _is_on_smoking_cooldown:
 		velocity.x = 0.0
 		velocity.z = 0.0

@@ -6,20 +6,27 @@ signal emptied
 @export_range(0.0, 1.0) var amount_left: float = 1.0:
 	set(value):
 		amount_left = clampf(value, 0.0, 1.0)
+		if is_node_ready():
+			_update_burn()
 		if amount_left == 0.0 and not _empty_emitted:
 			_empty_emitted = true
 			emptied.emit()
 
 @export_range(0.0, 1.0) var idle_consumption_per_second: float = 0.005
 @export_range(0.0, 1.0) var inhale_consumption_per_second: float = 0.05
+# remote copies don't burn on their own, the owner replicates amount_left instead
+@export var burning := true
 
 @onready var burnable: MeshInstance3D = $Burnable
 
 var _is_smoking: bool = false
 var _empty_emitted: bool = false
 
+func _ready() -> void:
+	_update_burn()
+
 func _process(delta: float) -> void:
-	if amount_left <= 0.0:
+	if not burning or amount_left <= 0.0:
 		return
 
 	var consumption := idle_consumption_per_second
@@ -27,7 +34,8 @@ func _process(delta: float) -> void:
 		consumption += inhale_consumption_per_second
 
 	amount_left -= consumption * delta
-	# update visual burn
+
+func _update_burn() -> void:
 	burnable.scale.y = amount_left
 	burnable.position.z = -0.1 - (0.2 * amount_left)
 
