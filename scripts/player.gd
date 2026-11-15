@@ -19,21 +19,26 @@ signal stepped(height: float)
 @onready var stats_panel: StatsPanel = %StatsPanel
 @onready var smoke_control: Control = %Smoke
 @onready var mouth: Node3D = $Mouth
+@onready var smoke: GPUParticles3D = $Mouth/Smoke
 
 @export var single_player := false
 @export var speed := 6.0
 @export var max_step_height := 0.35
-@export var smoking_duration: float = 2.0
-@export var smoking_cooldown: float = 3.0
-@export var exhale_delay: float = 0.5
+@export var smoking_duration: float = 1.5
+@export var smoking_cooldown: float = 2.0
+@export var exhale_delay: float = 2.0
 
 var cigarette: Cigarette
 var _is_smoking := false
 var smoking: bool = false:
 	set(value):
+		var was_smoking := smoking
 		smoking = value
 		_is_smoking = value
 		_update_smoking_visual()
+		# runs on every peer since smoking is replicated
+		if was_smoking and not value:
+			_exhale()
 var _is_on_smoking_cooldown := false
 var _smoking_timer: Timer
 var _cooldown_timer: Timer
@@ -110,6 +115,13 @@ func _end_smoking() -> void:
 	_is_on_smoking_cooldown = true
 	_cooldown_timer.start(exhale_delay + smoking_cooldown)
 
+# exhale while the lungs clear, after holding the smoke for the exhale delay
+func _exhale() -> void:
+	await get_tree().create_timer(exhale_delay).timeout
+	smoke.emitting = true
+	await get_tree().create_timer(smoking_cooldown).timeout
+	smoke.emitting = false
+
 func _spawn_cigarette() -> void:
 	if is_instance_valid(cigarette):
 		return
@@ -149,7 +161,7 @@ func _enter_tree() -> void:
 func _physics_process(delta: float) -> void:
 	if not is_authorized():
 		return
-	if _is_smoking:
+	if _is_smoking or _is_on_smoking_cooldown:
 		velocity.x = 0.0
 		velocity.z = 0.0
 		move_and_slide()

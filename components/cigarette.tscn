@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://0hboglhvuudy"]
 
 [ext_resource type="Script" uid="uid://dvr7yrgw51qis" path="res://scripts/cigarette.gd" id="1_2oy88"]
-[ext_resource type="Material" uid="uid://gbuq17f3cgau" path="res://particles/cigarette_smoke.tres" id="3_kstqr"]
+[ext_resource type="Material" uid="uid://didib2ftpc7y" path="res://particles/cigarette_smoke.tres" id="3_kstqr"]
 [ext_resource type="Texture2D" uid="uid://d3k2austf4hvu" path="res://textures/smoke.png" id="4_ubh8u"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2oy88"]

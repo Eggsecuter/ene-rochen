@@ -11,6 +11,8 @@
 [ext_resource type="Texture2D" uid="uid://0gh4m35tkkab" path="res://textures/mouseleft.png" id="9_qe8hj"]
 [ext_resource type="Texture2D" uid="uid://bu4ix7llu0wh2" path="res://textures/mouseright.png" id="10_eju5v"]
 [ext_resource type="PackedScene" path="res://components/stats_panel.tscn" id="11_stats"]
+[ext_resource type="Texture2D" uid="uid://d3k2austf4hvu" path="res://textures/smoke.png" id="12_smoke"]
+[ext_resource type="Material" uid="uid://bwesb9m14h1td" path="res://particles/exhale_smoke.tres" id="13_exhale"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_51jd6"]
 properties/0/path = NodePath(".:position")
@@ -275,6 +277,19 @@ bind/66/pose = Transform3D(-4.314871e-08, 0.9999999, 6.695601e-07, -1, -4.314686
 margin = 0.0
 radius = 0.3
 height = 1.7
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_exhale"]
+transparency = 1
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+albedo_texture = ExtResource("12_smoke")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_exhale"]
 
 [node name="Player" type="CharacterBody3D" unique_id=808011639]
 script = ExtResource("1_0g4kb")
@@ -913,5 +928,15 @@ unique_name_in_owner = true
 
 [node name="Mouth" type="Node3D" parent="." unique_id=1205411448]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5678144, -0.21705851)
+
+[node name="Smoke" type="GPUParticles3D" parent="Mouth" unique_id=1938402176]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0.03520903)
+material_override = SubResource("StandardMaterial3D_exhale")
+emitting = false
+amount = 100
+lifetime = 5.0
+fixed_fps = 60
+process_material = ExtResource("13_exhale")
+draw_pass_1 = SubResource("QuadMesh_exhale")
 
 [connection signal="on_turn" from="Camera3D" to="." method="_on_camera_3d_on_turn"]
