@@ -66,7 +66,9 @@ var net_state: Array = []:
 		net_state = value
 		if not is_authorized() and value.size() == 4:
 			_snapshots.push(value[0], value[1], value[2], value[3])
+
 var _snapshots := SnapshotBuffer.new()
+
 # every photo this player took, on every peer
 var photos: Array[Texture2D] = []
 # replicated so other players see the phone being drawn
