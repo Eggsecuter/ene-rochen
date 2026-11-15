@@ -83,6 +83,8 @@ func _ready() -> void:
 	canvas_layer.visible = is_authorized()
 	phone.live_preview = is_authorized()
 	phone.drawn = taking_photo
+	# photos get the same retro post-processing as the player's view
+	phone.lens_camera.compositor = camera.compositor
 	stats_panel.set_process_input(is_authorized())
 	_smoking_timer = Timer.new()
 	_smoking_timer.one_shot = true
