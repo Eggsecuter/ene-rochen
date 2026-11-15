@@ -18,8 +18,10 @@ signal stepped(height: float)
 @onready var cigarette_progress: TextureRect = %CigaretteProgress
 @onready var stats_panel: StatsPanel = %StatsPanel
 @onready var smoke_control: Control = %Smoke
+@onready var photo_control: Control = %Photo
 @onready var mouth: Node3D = $Mouth
 @onready var smoke: GPUParticles3D = $Mouth/Smoke
+@onready var phone: Phone = $Camera3D/Phone
 
 @export var single_player := false
 @export var speed := 6.0
@@ -27,6 +29,7 @@ signal stepped(height: float)
 @export var smoking_duration: float = 1.5
 @export var smoking_cooldown: float = 2.0
 @export var exhale_delay: float = 2.0
+@export_range(0.0, 1.0) var photo_quality := 0.8
 
 var cigarette: Cigarette
 var _is_smoking := false
@@ -45,10 +48,20 @@ var _cooldown_timer: Timer
 var _lungs_fill_at_cooldown := 0.0
 var _cigarette_progress_texture: AtlasTexture
 var smoked_cigarettes := 0
+# every photo this player took, on every peer
+var photos: Array[Texture2D] = []
+# replicated so other players see the phone being drawn
+var taking_photo := false:
+	set(value):
+		taking_photo = value
+		if is_node_ready():
+			phone.drawn = value
 
 func _ready() -> void:
 	floor_snap_length = max_step_height
 	canvas_layer.visible = is_authorized()
+	phone.live_preview = is_authorized()
+	phone.drawn = taking_photo
 	stats_panel.set_process_input(is_authorized())
 	_smoking_timer = Timer.new()
 	_smoking_timer.one_shot = true
@@ -72,6 +85,8 @@ func _process(_delta: float) -> void:
 
 	if Input.is_action_just_pressed("smoke"):
 		_start_smoking()
+	if Input.is_action_just_pressed("photo"):
+		_take_photo()
 
 	_update_hud()
 
@@ -85,19 +100,53 @@ func _update_hud() -> void:
 	else:
 		lungs.value = 0.0
 
-	var can_smoke := not _is_smoking and not _is_on_smoking_cooldown and is_instance_valid(cigarette)
+	var can_smoke := not _is_smoking and not _is_on_smoking_cooldown and not taking_photo and is_instance_valid(cigarette)
 	smoke_control.modulate = Color.WHITE if can_smoke else DISABLED_CONTROL_COLOR
+	photo_control.modulate = Color.WHITE if _can_take_photo() else DISABLED_CONTROL_COLOR
 
 	var amount_left := cigarette.amount_left if is_instance_valid(cigarette) else 1.0
 	var stage := clampi(int((1.0 - amount_left) * CIGARETTE_STAGES.size()), 0, CIGARETTE_STAGES.size() - 1)
 	_cigarette_progress_texture.atlas = CIGARETTE_STAGES[stage]
 
 func _start_smoking() -> void:
-	if _is_smoking or _is_on_smoking_cooldown or not is_instance_valid(cigarette):
+	if _is_smoking or _is_on_smoking_cooldown or taking_photo or not is_instance_valid(cigarette):
 		return
 
 	smoking = true
 	_smoking_timer.start(smoking_duration)
+
+func _can_take_photo() -> bool:
+	return not taking_photo and not _is_smoking and not _is_on_smoking_cooldown
+
+# draws the phone, takes a photo of the current view and puts the phone away again
+func _take_photo() -> void:
+	if not _can_take_photo():
+		return
+
+	taking_photo = true
+	await get_tree().create_timer(phone.draw_duration).timeout
+	var image := await phone.capture()
+	if not single_player:
+		_receive_photo.rpc(image.save_webp_to_buffer(true, photo_quality))
+	_add_photo(image)
+	await get_tree().create_timer(phone.hold_duration).timeout
+	taking_photo = false
+
+# photos are sent compressed, a raw 640x360 image would be ~700kb
+@rpc("authority", "call_remote", "reliable")
+func _receive_photo(data: PackedByteArray) -> void:
+	var image := Image.new()
+	if image.load_webp_from_buffer(data) != OK:
+		push_warning("Received an invalid photo from %s" % name)
+		return
+	_add_photo(image)
+
+func _add_photo(image: Image) -> void:
+	image.generate_mipmaps()
+	var photo := ImageTexture.create_from_image(image)
+	photos.append(photo)
+	phone.show_photo(photo)
+	stats_panel.add_photo(photo)
 
 func _get_smoking_lungs_fill() -> float:
 	return 1.0 - _smoking_timer.time_left / smoking_duration

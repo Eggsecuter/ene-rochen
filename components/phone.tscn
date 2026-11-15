@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/phone.gd" id="1_phone"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
+albedo_color = Color(0.08, 0.08, 0.09, 1)
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+material = SubResource("StandardMaterial3D_body")
+size = Vector3(0.14, 0.084, 0.008)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_screen"]
+shading_mode = 0
+albedo_color = Color(0, 0, 0, 1)
+texture_filter = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_screen"]
+size = Vector2(0.128, 0.072)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lens"]
+albedo_color = Color(0.02, 0.02, 0.03, 1)
+metallic = 0.6
+roughness = 0.1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lens"]
+material = SubResource("StandardMaterial3D_lens")
+top_radius = 0.006
+bottom_radius = 0.006
+height = 0.002
+radial_segments = 16
+rings = 1
+
+[node name="Phone" type="Node3D"]
+script = ExtResource("1_phone")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_body")
+
+[node name="Screen" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0041)
+material_override = SubResource("StandardMaterial3D_screen")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_screen")
+
+[node name="LensMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -0.055, 0.028, -0.005)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lens")
+
+[node name="Lens" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.055, 0.028, -0.007)
+
+[node name="Viewport" type="SubViewport" parent="."]
+msaa_3d = 2
+use_debanding = true
+size = Vector2i(640, 360)
+render_target_update_mode = 0
+
+[node name="Camera3D" type="Camera3D" parent="Viewport"]
+physics_interpolation_mode = 2
+current = true
+fov = 70.0
+near = 0.01

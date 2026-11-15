@@ -79,3 +79,21 @@ layout_mode = 2
 theme_override_constants/h_separation = 24
 theme_override_constants/v_separation = 16
 script = ExtResource("4_cntr")
+
+[node name="PhotosLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer" unique_id=1093468216]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 48
+text = "Photos"
+
+[node name="PhotosScroll" type="ScrollContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=402785619]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Photos" type="HFlowContainer" parent="Panel/MarginContainer/VBoxContainer/PhotosScroll" unique_id=1755904387]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12

@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://components/stats_panel.tscn" id="11_stats"]
 [ext_resource type="Texture2D" uid="uid://d3k2austf4hvu" path="res://textures/smoke.png" id="12_smoke"]
 [ext_resource type="Material" uid="uid://dg875tvqcu8tv" path="res://particles/exhale_smoke.tres" id="13_exhale"]
+[ext_resource type="PackedScene" path="res://components/phone.tscn" id="14_phone"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_51jd6"]
 properties/0/path = NodePath(".:position")
@@ -24,6 +25,9 @@ properties/1/replication_mode = 1
 properties/2/path = NodePath(".:smoking")
 properties/2/spawn = true
 properties/2/replication_mode = 1
+properties/3/path = NodePath(".:taking_photo")
+properties/3/spawn = true
+properties/3/replication_mode = 1
 
 [sub_resource type="CompositorEffect" id="CompositorEffect_d6vnc"]
 resource_local_to_scene = false
@@ -301,6 +305,9 @@ replication_config = SubResource("SceneReplicationConfig_51jd6")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.15)
 compositor = SubResource("Compositor_it7tt")
 script = ExtResource("2_51jd6")
+
+[node name="Phone" parent="Camera3D" unique_id=1584203367 instance=ExtResource("14_phone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.09, -0.28)
 
 [node name="Skeleton3D" type="Skeleton3D" parent="." unique_id=1603025568]
 transform = Transform3D(-1, 8.742277e-08, -3.8213705e-15, 0, -4.3711385e-08, -0.99999994, -8.742278e-08, -0.99999994, 4.3711385e-08, 0, 0, 0)
@@ -904,6 +911,7 @@ theme_override_font_sizes/font_size = 48
 text = "Smoke"
 
 [node name="Photo" type="HBoxContainer" parent="CanvasLayer/Controls/MarginContainer/VBoxContainer" unique_id=1729121200]
+unique_name_in_owner = true
 layout_mode = 2
 offset_transform_enabled = true
 offset_transform_rotation = 0.017453292

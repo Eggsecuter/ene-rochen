@@ -7,6 +7,9 @@ extends Control
 @onready var backdrop: ColorRect = %Backdrop
 @onready var panel: PanelContainer = %Panel
 @onready var cigarette_counter: CigaretteCounter = %CigaretteCounter
+@onready var photos: HFlowContainer = %Photos
+
+@export var photo_size := Vector2(160, 90)
 
 var is_open := false
 var _shown_x: float
@@ -26,6 +29,18 @@ func _input(event: InputEvent) -> void:
 
 	# keep the camera from also handling close (it releases the mouse)
 	get_viewport().set_input_as_handled()
+
+func add_photo(photo: Texture2D) -> void:
+	var rect := TextureRect.new()
+	rect.texture = photo
+	rect.custom_minimum_size = photo_size
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	# photos are downscaled a lot, nearest filtering would alias
+	rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	photos.add_child(rect)
+	# newest photo first
+	photos.move_child(rect, 0)
 
 func toggle() -> void:
 	if is_open:
